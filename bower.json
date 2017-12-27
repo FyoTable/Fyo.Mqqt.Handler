@@ -1,0 +1,24 @@
+{
+  "name": "fyo.portal",
+  "description": "Portal for the Fyo",
+  "main": "index.js",
+  "authors": [
+    "Garrett Hoofman <gambitsunob@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/FyoTable/Fyo.Portal",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "react": "^16.0.0",
+    "babel": "^5.8.38",
+    "fetch": "^2.0.3",
+    "jquery": "^3.2.1"
+  }
+}
