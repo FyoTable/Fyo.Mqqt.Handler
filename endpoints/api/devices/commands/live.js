@@ -1,6 +1,6 @@
 const mqtt = require('../../../../utils/mqtt.js');
 
-let client = mqtt.client();
+var client = mqtt.client();
 client.subscribe('device-state');
 
 module.exports = function(app) {
