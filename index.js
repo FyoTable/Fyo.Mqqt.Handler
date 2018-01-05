@@ -49,7 +49,19 @@ function handler (req, res) {
   
   io.on('connection', function (socket) {
     socket.emit('screenshot');
-    socket.on('my other event', function (data) {
-      console.log(data);
+    socket.on('screenshot', function (data) {
+        console.log(screenshot);
+        console.log(data);
+
+        io.to(data.device).emit('screenshot', data.content);
+
+        var buf = new Buffer(data.content, 'base64');
+        require('fs').writeFile(__dirname + '/test.png', buf);
     });
+
+    socket.on('device', function(id) {
+        socket.join(id);
+        console.log('Socket joined: ', id);
+    });
+
   });
