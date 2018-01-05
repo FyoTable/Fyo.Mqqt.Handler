@@ -23,9 +23,33 @@ app.all('/', function(req, res, next) {
 
 helpers.Require(__dirname + '/endpoints/api/', app);
 
+
 // Start the server
 var server = app.listen(PORT, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log("Listening at http://%s:%s", host, port);
 });
+
+var io = require('socket.io')(server);
+
+
+function handler (req, res) {
+    fs.readFile(__dirname + '/index.html',
+    function (err, data) {
+      if (err) {
+        res.writeHead(500);
+        return res.end('Error loading index.html');
+      }
+  
+      res.writeHead(200);
+      res.end(data);
+    });
+  }
+  
+  io.on('connection', function (socket) {
+    socket.emit('screenshot');
+    socket.on('my other event', function (data) {
+      console.log(data);
+    });
+  });
