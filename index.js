@@ -1,12 +1,24 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var helpers = require('./utils/helpers.js');
-var cors = require('cors')
+var cors = require('cors');
+
+var whitelist = ['http://localhost:5000', 'http://fyo.io']
+var corsOptions = {
+  origin: function (origin, callback) {
+	  console.log(origin);
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
 require('dotenv').config();
 require('./utils/mqtt.js');
 
-const PORT = process.env.PORT || process.env.port || 8090
+const PORT = process.env.PORT || process.env.port || 8095
 
 // Setup the Express app that will run the server
 var app = express();
@@ -48,20 +60,32 @@ function handler (req, res) {
   }
   
   io.on('connection', function (socket) {
-    socket.emit('screenshot');
+	console.log('Connection!');
     socket.on('screenshot', function (data) {
-        console.log(screenshot);
-        console.log(data);
+        //console.log(data);
 
-        io.to(data.device).emit('screenshot', data.content);
+	console.log('screenshot received');
+
+        io.to(data.device).emit('screenshotData', data.content);
 
         var buf = new Buffer(data.content, 'base64');
         require('fs').writeFile(__dirname + '/test.png', buf);
     });
 
+	// Portal or Device
+	// Join  Device Room
     socket.on('device', function(id) {
         socket.join(id);
         console.log('Socket joined: ', id);
     });
+
+	// Portal => Device
+	socket.on('capture', function(data) {
+		console.log(data);
+		if(data && data.device) {
+			io.to(data.device).emit('capture', data.content);
+		}
+		//socket.broadcast.emit('capture');
+	});
 
   });
